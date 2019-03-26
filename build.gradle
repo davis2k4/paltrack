@@ -2,6 +2,7 @@
 buildscript {
     ext {
         springBootVersion = "2.0.6.RELEASE"
+
     }
 
     repositories {
@@ -27,7 +28,9 @@ apply plugin: 'org.springframework.boot'
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.7")
     testCompile("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
+    testCompile('org.mockito:mockito-junit-jupiter:2.25.1')
 }
 
 bootRun.environment([
