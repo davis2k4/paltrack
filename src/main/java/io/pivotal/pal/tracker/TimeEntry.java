@@ -4,11 +4,11 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 public class TimeEntry {
-    private final long id;
-    private final long projectId;
-    private final long userId;
-    private final LocalDate date;
-    private final int hours;
+    private long id;
+    private long projectId;
+    private long userId;
+    private LocalDate date;
+    private int hours;
 
     public TimeEntry(long id, long projectId, long userId, LocalDate date, int hours) {
         this.id = id;
@@ -19,7 +19,7 @@ public class TimeEntry {
     }
 
     public TimeEntry() {
-        this(0,0,0,null,0);
+
     }
 
     public long getId() {
