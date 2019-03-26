@@ -1,12 +1,12 @@
 package io.pivotal.pal.tracker;
 
-import org.springframework.stereotype.Repository;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryTimeEntryRepository implements TimeEntryRepository {
-    private final List<TimeEntry> data = new ArrayList<>();
+    private final Map<Long,TimeEntry> data = new ConcurrentHashMap<>();
     int currentId = 1;
 
     public InMemoryTimeEntryRepository() {
@@ -14,37 +14,36 @@ public class InMemoryTimeEntryRepository implements TimeEntryRepository {
 
     @Override
     public TimeEntry create(TimeEntry timeEntry) {
-        TimeEntry te = new TimeEntry(currentId++,timeEntry);
-        data.add(te);
+        TimeEntry te = TimeEntryBuilder.builder(timeEntry).id(currentId++).build();
+        data.put(te.getId(),te);
         return te;
 
     }
 
     @Override
     public TimeEntry find(long id) {
-        return data.stream().filter(te -> te.getId() == id).findFirst().orElse(null);
+        return data.get(id);
     }
 
     @Override
     public List<TimeEntry> list() {
-        return data;
+        return new ArrayList<>(data.values());
     }
 
 
     @Override
     public TimeEntry update(long id, TimeEntry timeEntry) {
-        TimeEntry te = find(id);
-        if(te != null){
-            te.setDate(timeEntry.getDate());
-            te.setHours(timeEntry.getHours());
-            te.setProjectId(timeEntry.getProjectId());
-            te.setUserId(timeEntry.getUserId());
+        if(data.get(id) != null){
+            TimeEntry te = TimeEntryBuilder.builder(timeEntry).id(id).build();
+            this.data.put(id,te);
+            return te;
+        }else{
+            return null;
         }
-        return te;
     }
 
     @Override
     public void delete(long id) {
-        data.removeIf(t -> t.getId() == id);
+        data.remove(id);
     }
 }
